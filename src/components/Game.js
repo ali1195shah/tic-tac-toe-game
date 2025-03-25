@@ -11,32 +11,48 @@ function Game() {
         if (squares[i]){
             return;
         }
-    }
     
-//     const newSquares = squares.slice();
-//     newSquares[i] = isXNext ? 'X' : 'O';
-//     setSquares(newSquares);
-//     setIsXNext(!isXNext);
-//   };
+    
+    const newSquares = squares.slice();
+    newSquares[i] = isXNext ? 'X' : 'O';
+    setSquares(newSquares);
+    setIsXNext(!isXNext);
+  };
 
-//   const winner = calculateWinner(squares);
-//   const status = winner 
-//     ? `Winner: ${winner}` 
-//     : squares.every(square => square) 
-//       ? 'Game ended in a draw!' 
-//       : `Next player: ${isXNext ? 'X' : 'O'}`;
+  const winner = calculateWinner(squares);
+  const status = winner 
+    ? `Winner: ${winner}` 
+    : squares.every(square => square) 
+      ? 'Game ended in a draw!' 
+      : `Next player: ${isXNext ? 'X' : 'O'}`;
 
   return (
     <div className="game">
-      {/* <div 
+      <div 
       className="status"
-      >{status}</div> */}
+      >{status}</div>
       <Board 
         squares={squares} 
         onClick={handleClick} 
       />
     </div>
   );
+}
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+    [0, 4, 8], [2, 4, 6]             // diagonals
+  ];
+
+  for (let line of lines) {
+    const [a, b, c] = line;
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
 }
 
 

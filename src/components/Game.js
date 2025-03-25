@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import Board from './Board';
+import Board from '../components/Board';
+import calculateWinner from '../gamelogic/Logic'
 import '../App.css';
 
-function Game() {
+function Game(){
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
 
-    const handleClick = (i) => {
-        console.log(squares);
-        if (squares[i]){
-            return;
-        }
-    
+  const winner = calculateWinner(squares);
+  const isGameOver = winner || squares.every(square => square !== null);
+
+  const handleClick = (i) => {
+    if (squares[i] || isGameOver) {
+      return;
+    }
     
     const newSquares = squares.slice();
     newSquares[i] = isXNext ? 'X' : 'O';
@@ -19,7 +21,16 @@ function Game() {
     setIsXNext(!isXNext);
   };
 
-  const winner = calculateWinner(squares);
+  const playAgain = () => {
+    setSquares(Array(9).fill(null));
+    setIsXNext(true);
+  };
+
+  const resetGame = () => {
+    setSquares(Array(9).fill(null));
+    setIsXNext(true);
+  }
+
   const status = winner 
     ? `Winner: ${winner}` 
     : squares.every(square => square) 
@@ -28,32 +39,20 @@ function Game() {
 
   return (
     <div className="game">
-      <div 
-      className="status"
-      >{status}</div>
+      <div className="status">{status}</div>
       <Board 
         squares={squares} 
-        onClick={handleClick} 
+        onClick={handleClick}
+        isGameOver={isGameOver}
       />
+      {isGameOver && (
+        <button className="playagain-button" onClick={playAgain}>
+          Play Again
+        </button>
+      )}
+      <button className='reset-button' onClick={resetGame} >Reset</button>
     </div>
   );
 }
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-    [0, 4, 8], [2, 4, 6]             // diagonals
-  ];
-
-  for (let line of lines) {
-    const [a, b, c] = line;
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
-
 
 export default Game;
